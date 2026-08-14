@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Khacks
 
-## Getting Started
-
-First, run the development server:
+Marketing site for Khacks — Kentucky's hackathon. Next.js 16 (App Router),
+Tailwind v4, dark-only. Registration is external: every CTA points at Luma.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run dev     # http://localhost:3000
+npm run build   # production build
+npm run lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Editing the site
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Every fact on the page comes from `lib/`. Components read it — they never
+hardcode a date, price, or URL.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| File | Holds |
+| --- | --- |
+| `lib/event.ts` | name, dates, venue, Luma URL, capacity, stats, contact, socials, bottom-banner copy, nav |
+| `lib/tracks.ts` | the six build tracks |
+| `lib/schedule.ts` | two-day run of show |
+| `lib/prizes.ts` | grand/runner-up/third, track prize, specials |
+| `lib/faq.ts` | FAQ entries |
+| `lib/team.ts` | organizers (`photo: null` → initials placeholder) |
+| `lib/sponsors.ts` | tiers, perks, in-kind blurb, post-signing timeline |
 
-## Learn More
+Placeholders to replace before launch: `siteUrl`, `dates`, `venue`,
+`venueDetail`, the Luma URL, contact addresses, and prize amounts.
 
-To learn more about Next.js, take a look at the following resources:
+The Luma link can also be overridden per-environment:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+cp .env.example .env.local   # then set NEXT_PUBLIC_LUMA_URL
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Set `event.notice` to `null` to hide the yellow bottom strip.
 
-## Deploy on Vercel
+## Design
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Warm near-black canvas, chalk hairline boxes on a 6px hard offset, all
+JetBrains Mono, one accent per viewport (orange = register). Tokens live in
+`app/globals.css` under `@theme`; `components/ui/OutlineBox` and
+`OutlineButton` are the primitives everything composes from. Newsreader italic
+is display-only — one pull quote in the About section.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Art is hand-authored SVG in `components/art/` (no image assets): the crate
+stack, the pixel cardinal, the ghost, and the six track drawings.
+
+## Motion
+
+All of it sits behind `lib/motion.ts`. With OS reduce-motion on, Lenis, GSAP,
+anime.js, and the Three.js canvas all skip mounting and the page is static.
+
+- `SmoothScroll` — Lenis, lazily imported
+- `Reveal` — GSAP ScrollTrigger section wipes + hero crate drop-in
+- `Drift` — anime.js idle bob, paused off-screen via IntersectionObserver
+- `WireBarrel` — Three.js wireframe barrel, loaded on idle, desktop only
+- `MobileSheet` — framer-motion, loaded only when the mobile menu first opens
+
+Heavy libraries are dynamically imported, so none of them are in the initial
+route bundle.
