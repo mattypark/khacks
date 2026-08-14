@@ -44,7 +44,7 @@ export function Hero() {
         </dl>
 
         <p className="mt-10 text-fine text-chalk-dim">
-          {event.dates} · {event.venue} · {event.cost}
+          {event.dates} · {event.hours} · {event.venue} · {event.cost}
         </p>
       </div>
 

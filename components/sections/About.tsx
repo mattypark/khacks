@@ -45,9 +45,9 @@ export function About() {
       <div className="grid gap-16 md:grid-cols-2 md:gap-20">
         <InfoColumn icon={MegaphoneIcon} title="What is Khacks">
           <p>
-            {event.duration} to build one thing well. You show up with an idea
-            or nothing at all, form a team of up to four, and ship something
-            demo-able by Sunday afternoon.
+            One day, {event.hours} — {event.duration} to build one thing well.
+            You show up with an idea or nothing at all, form a team of up to
+            four, and demo it before the doors close.
           </p>
           <p>
             No theme to shoehorn into. Six tracks, four special prizes, and a
@@ -63,15 +63,15 @@ export function About() {
           <p>
             High school and college students from anywhere. Roughly a third of
             the room every year has never been to a hackathon before, and the
-            beginner workshops on day one exist for exactly that reason.
+            morning workshops exist for exactly that reason.
           </p>
           <p>
             {event.cost}. Capacity is {event.capacity}, and spots go in the
             order applications land.
           </p>
           <p className="font-display text-h3 italic text-chalk">
-            &ldquo;Come alone. Leave with a team, a project, and four people who
-            text you about side projects for years.&rdquo;
+            &ldquo;Come alone at eight. Leave at nine with a team, a project,
+            and three people who text you about side projects for years.&rdquo;
           </p>
         </InfoColumn>
       </div>

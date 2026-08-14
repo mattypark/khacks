@@ -1,4 +1,4 @@
-/** Two-day run of show. Placeholder times until the venue is locked. */
+/** Single-day run of show, 8am to 9pm. Placeholder times until the venue is locked. */
 
 export type Slot = {
   time: string;
@@ -8,39 +8,38 @@ export type Slot = {
   key?: boolean;
 };
 
-export type Day = {
+export type Block = {
   label: string;
-  date: string;
+  window: string;
   slots: Slot[];
 };
 
-export const schedule: Day[] = [
+export const schedule: Block[] = [
   {
-    label: "Day 01",
-    date: "Saturday",
+    label: "Morning",
+    window: "8:00 — 12:00",
     slots: [
-      { time: "09:00", title: "Doors + check-in", detail: "Coffee, stickers, wifi codes" },
-      { time: "10:00", title: "Opening ceremony", detail: "Rules, judging, sponsors", key: true },
-      { time: "10:30", title: "Team formation", detail: "Come solo, leave with three friends" },
-      { time: "11:00", title: "Hacking begins", key: true },
-      { time: "13:00", title: "Lunch" },
-      { time: "14:30", title: "Workshop — Ship a first API" },
-      { time: "17:00", title: "Workshop — Hardware bench hours" },
-      { time: "19:00", title: "Dinner + lightning talks" },
-      { time: "23:00", title: "Midnight snack run" },
+      { time: "8:00", title: "Doors + check-in", detail: "Coffee, stickers, wifi codes" },
+      { time: "8:45", title: "Opening ceremony", detail: "Rules, judging, sponsors", key: true },
+      { time: "9:15", title: "Team formation", detail: "Come solo, leave with three friends" },
+      { time: "9:30", title: "Hacking begins", key: true },
+      { time: "10:30", title: "Workshop — Ship a first API" },
+      { time: "11:30", title: "Workshop — Hardware bench hours" },
     ],
   },
   {
-    label: "Day 02",
-    date: "Sunday",
+    label: "Afternoon + evening",
+    window: "12:00 — 21:00",
     slots: [
-      { time: "08:00", title: "Breakfast" },
-      { time: "10:00", title: "Mentor sweep", detail: "Last call for stuck teams" },
-      { time: "12:00", title: "Lunch" },
-      { time: "16:00", title: "Submissions close", detail: "Hard deadline. No extensions.", key: true },
-      { time: "16:30", title: "Science-fair judging", detail: "Judges walk the room" },
-      { time: "18:30", title: "Finalist demos", detail: "Top six on stage, 3 minutes each" },
-      { time: "19:30", title: "Awards + closing", key: true },
+      { time: "12:30", title: "Lunch", detail: "Eat at your table or don't — the room stays open" },
+      { time: "14:00", title: "Mentor sweep", detail: "Every table gets a check-in" },
+      { time: "16:00", title: "Last call for stuck teams", detail: "Scope down now, not at 18:00" },
+      { time: "17:30", title: "Dinner" },
+      { time: "18:30", title: "Submissions close", detail: "Hard deadline. No extensions.", key: true },
+      { time: "18:45", title: "Science-fair judging", detail: "Judges walk the room" },
+      { time: "20:00", title: "Finalist demos", detail: "Top six on stage, 3 minutes each" },
+      { time: "20:40", title: "Awards + closing", key: true },
+      { time: "21:00", title: "Doors close" },
     ],
   },
 ];

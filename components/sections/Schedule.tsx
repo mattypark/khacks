@@ -6,22 +6,22 @@ export function Schedule() {
     <section id="schedule" className="shell section-y" data-reveal>
       <SectionHead
         index="02"
-        title="Run of show"
-        lede="Times are provisional until the venue is confirmed. Submissions close hard — everything else has slack in it."
+        title="One day, 8am to 9pm"
+        lede="Doors at eight, awards before nine. Times are provisional until the venue is confirmed — submissions close hard, everything else has slack in it."
       />
 
       <div className="grid gap-14 md:grid-cols-2 md:gap-16">
-        {schedule.map((day) => (
-          <div key={day.label}>
+        {schedule.map((block) => (
+          <div key={block.label}>
             <div className="flex items-baseline gap-4 border-b-[length:var(--rule)] border-chalk pb-4">
-              <h3 className="text-h3 font-bold">{day.label}</h3>
-              <span className="text-fine text-chalk-dim">{day.date}</span>
+              <h3 className="text-h3 font-bold">{block.label}</h3>
+              <span className="text-fine text-chalk-dim">{block.window}</span>
             </div>
 
             <ol className="mt-2">
-              {day.slots.map((slot) => (
+              {block.slots.map((slot) => (
                 <li
-                  key={`${day.label}-${slot.time}`}
+                  key={`${block.label}-${slot.time}`}
                   className="flex gap-5 border-b-[length:var(--rule)] border-chalk/15 py-4 last:border-b-0"
                 >
                   <span

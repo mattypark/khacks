@@ -17,7 +17,7 @@ export function Sponsors() {
       <SectionHead
         index="05"
         title="Sponsors"
-        lede="Khacks is free because companies pay for it. In return they get a weekend inside a room of people who build things without being asked to."
+        lede="Khacks is free because companies pay for it. In return they get a day inside a room of people who build things without being asked to."
       />
 
       <div className="space-y-12">

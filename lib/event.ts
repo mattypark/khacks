@@ -10,7 +10,7 @@ export const event = {
   name: "Khacks",
   tagline: "Kentucky's Best Hackathon",
   description:
-    "36 hours. Free to enter. Build anything with anyone — Khacks is Kentucky's flagship hackathon for high school and college builders.",
+    "One day, 8am to 9pm. Free to enter. Build anything with anyone — Khacks is Kentucky's flagship hackathon for high school and college builders.",
 
   // TODO(placeholder): swap for the live domain before launch.
   siteUrl: "https://khacks.dev",
@@ -21,7 +21,8 @@ export const event = {
   // TODO(placeholder): confirmed date + venue.
   dates: "TBA · Spring 2026",
   datesShort: "TBA 2026",
-  duration: "36 hours",
+  duration: "13 hours",
+  hours: "8:00am — 9:00pm",
   venue: "Louisville, KY",
   venueDetail: "Venue announcement coming soon",
   capacity: "300 builders",
@@ -48,7 +49,7 @@ export const event = {
   // Headline numbers used by the hero strip and the sponsor page.
   stats: [
     { value: "300", label: "builders" },
-    { value: "36", label: "hours" },
+    { value: "13", label: "hours, one day" },
     { value: "$15K", label: "in prizes" },
     { value: "$0", label: "to enter" },
   ],

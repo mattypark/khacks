@@ -32,7 +32,7 @@ export const tiers: Tier[] = [
   {
     name: "Cardinal",
     price: "$5,000",
-    summary: "Front-of-room presence all weekend.",
+    summary: "Front-of-room presence all day.",
     perks: [
       "Sponsor a $750 track prize",
       "Run a workshop or lightning talk",
@@ -58,13 +58,13 @@ export const tiers: Tier[] = [
 export const inKind = {
   title: "In-kind welcome",
   detail:
-    "Credits, hardware, food, and venue space count. If your company makes something builders would use at 3am, we want to talk.",
+    "Credits, hardware, food, and venue space count. If your company makes something a team would reach for at hour nine, we want to talk.",
 };
 
 export const sponsorTimeline = [
   { when: "On signing", what: "Logo live on the site within 48 hours" },
   { when: "6 weeks out", what: "Social announcement + newsletter feature" },
   { when: "2 weeks out", what: "Workshop slot confirmed, swag shipped to venue" },
-  { when: "Event weekend", what: "Mentor table, judging seat, stage time" },
+  { when: "Event day", what: "Mentor table, judging seat, stage time" },
   { when: "1 week after", what: "Impact report: reach, demos, opt-in resumes" },
 ];
