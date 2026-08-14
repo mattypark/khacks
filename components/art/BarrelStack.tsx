@@ -39,11 +39,7 @@ export function BarrelStack({ className = "" }: { className?: string }) {
       aria-label="Three stacked crates marked with a bourbon barrel, a cardinal, and a terminal cursor"
       className={`h-auto w-full max-w-[260px] ${className}`}
     >
-      <g
-        className="stroke-linejoin-round"
-        strokeLinejoin="round"
-        strokeLinecap="round"
-      >
+      <g strokeLinejoin="round" strokeLinecap="round">
         {/* Top crate — barrel */}
         <Cube x={30} y={60} order={0}>
           <g className="fill-none stroke-ink" strokeWidth="5">
