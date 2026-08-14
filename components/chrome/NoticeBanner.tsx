@@ -1,18 +1,34 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { event } from "@/lib/event";
 
 const DISMISS_KEY = "khacks:notice-dismissed";
 
+/**
+ * Tiny store so the banner reads sessionStorage during render instead of
+ * setting state from an effect. The server snapshot is "dismissed", which
+ * keeps the markup stable and avoids a flash before hydration.
+ */
+const listeners = new Set<() => void>();
+
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+}
+
+function isDismissed() {
+  return sessionStorage.getItem(DISMISS_KEY) === "1";
+}
+
+function dismiss() {
+  sessionStorage.setItem(DISMISS_KEY, "1");
+  listeners.forEach((listener) => listener());
+}
+
 /** Butter-yellow strip pinned to the bottom, dismissible for the session. */
 export function NoticeBanner() {
-  const [hidden, setHidden] = useState(true);
-
-  // Start hidden so a returning visitor never sees a flash before the check.
-  useEffect(() => {
-    setHidden(sessionStorage.getItem(DISMISS_KEY) === "1");
-  }, []);
+  const hidden = useSyncExternalStore(subscribe, isDismissed, () => true);
 
   if (!event.notice || hidden) return null;
 
@@ -36,10 +52,7 @@ export function NoticeBanner() {
         </p>
         <button
           type="button"
-          onClick={() => {
-            sessionStorage.setItem(DISMISS_KEY, "1");
-            setHidden(true);
-          }}
+          onClick={dismiss}
           aria-label="Dismiss announcement"
           className="shrink-0 px-2 text-fine font-bold hover:opacity-60"
         >

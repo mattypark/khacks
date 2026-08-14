@@ -1,5 +1,6 @@
 import { BarrelStack } from "@/components/art/BarrelStack";
 import { Ghost } from "@/components/art/Ghost";
+import { WireBarrel } from "@/components/motion/WireBarrel";
 import { OutlineButton } from "@/components/ui/OutlineButton";
 import { event } from "@/lib/event";
 
@@ -49,9 +50,10 @@ export function Hero() {
 
       <div
         data-barrel
-        className="justify-self-center lg:justify-self-end lg:pt-6"
+        className="relative justify-self-center lg:justify-self-end lg:pt-6"
       >
-        <BarrelStack />
+        <WireBarrel className="pointer-events-none absolute -left-24 top-24 hidden w-[320px] lg:block" />
+        <BarrelStack className="relative" />
       </div>
     </section>
   );
