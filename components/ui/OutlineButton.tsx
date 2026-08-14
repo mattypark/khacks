@@ -65,11 +65,13 @@ export function OutlineButton({
   const wrapper = `group relative inline-block ${className}`;
 
   if (external) {
+    // mailto: hands off to the mail client — a new tab would just be left blank.
+    const newTab = !href.startsWith("mailto:");
     return (
       <a
         href={href}
-        target="_blank"
-        rel="noopener noreferrer"
+        target={newTab ? "_blank" : undefined}
+        rel={newTab ? "noopener noreferrer" : undefined}
         className={wrapper}
       >
         {body}
