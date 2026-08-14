@@ -1,14 +1,22 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import { LogoMark } from "./LogoMark";
 import { OutlineButton } from "@/components/ui/OutlineButton";
 import { event, nav } from "@/lib/event";
 
+// framer-motion is only needed once someone opens the mobile menu.
+const MobileSheet = dynamic(
+  () => import("./MobileSheet").then((m) => m.MobileSheet),
+  { ssr: false },
+);
+
 export function Nav() {
   const [open, setOpen] = useState(false);
+  // Stays true after the first open so the exit animation can play out.
+  const [sheetMounted, setSheetMounted] = useState(false);
 
   // Lock the page behind the mobile sheet.
   useEffect(() => {
@@ -17,6 +25,11 @@ export function Nav() {
       document.body.style.overflow = "";
     };
   }, [open]);
+
+  const toggle = () => {
+    setSheetMounted(true);
+    setOpen((v) => !v);
+  };
 
   return (
     <header className="sticky top-0 z-40 border-b-[length:var(--rule)] border-chalk/15 bg-ink/90 backdrop-blur-sm">
@@ -43,7 +56,7 @@ export function Nav() {
 
         <button
           type="button"
-          onClick={() => setOpen((v) => !v)}
+          onClick={toggle}
           aria-expanded={open}
           aria-controls="mobile-nav"
           className="border-[length:var(--rule)] border-chalk px-3 py-2 text-fine font-bold lg:hidden"
@@ -52,39 +65,9 @@ export function Nav() {
         </button>
       </div>
 
-      <AnimatePresence>
-        {open ? (
-          <motion.div
-            id="mobile-nav"
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.18, ease: [0.25, 1, 0.5, 1] }}
-            className="border-t-[length:var(--rule)] border-chalk/15 bg-ink lg:hidden"
-          >
-            <nav aria-label="Primary, mobile" className="shell flex flex-col py-6">
-              {nav.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setOpen(false)}
-                  className="border-b-[length:var(--rule)] border-chalk/15 py-4 text-h3 font-bold last:border-b-0"
-                >
-                  {item.label}
-                </Link>
-              ))}
-              <OutlineButton
-                href={event.lumaUrl}
-                external
-                size="lg"
-                className="mt-8 self-start"
-              >
-                Register on Luma
-              </OutlineButton>
-            </nav>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
+      {sheetMounted ? (
+        <MobileSheet open={open} onClose={() => setOpen(false)} />
+      ) : null}
     </header>
   );
 }
