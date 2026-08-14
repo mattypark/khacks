@@ -1,26 +1,120 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ---------------------------------------------------------------------------
+   Khacks design tokens
+   Warm near-black canvas, chalk-white hairline boxes, one accent per viewport.
+   Dark-only by design — there is no light theme.
+--------------------------------------------------------------------------- */
+
+@theme {
+  --color-ink: #22221f;
+  --color-ink-raised: #2b2b27;
+  --color-ink-deep: #1a1a17;
+  --color-chalk: #f5f4ef;
+  --color-chalk-dim: #a8a69c;
+  --color-ghost: #6ab97a;
+  --color-invader: #e2542c;
+  --color-butter: #f7e9b0;
+
+  --font-mono: var(--font-jetbrains), ui-monospace, "SF Mono", Menlo, monospace;
+  --font-display: var(--font-newsreader), Georgia, serif;
+
+  --text-hero: 4.5rem;
+  --text-hero--line-height: 1.02;
+  --text-h1: 3rem;
+  --text-h1--line-height: 1.08;
+  --text-h2: 2rem;
+  --text-h2--line-height: 1.15;
+  --text-h3: 1.35rem;
+  --text-h3--line-height: 1.3;
+  --text-body: 1rem;
+  --text-body--line-height: 1.65;
+  --text-fine: 0.875rem;
+  --text-fine--line-height: 1.55;
+
+  /* Hard-offset shadow distance for the double-outline card look. */
+  --offset: 6px;
+  --rule: 2px;
+
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    background: var(--color-ink);
+    /* Native smooth scroll stays off — Lenis owns scrolling. */
+    scroll-behavior: auto;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    background: var(--color-ink);
+    color: var(--color-chalk);
+    font-family: var(--font-mono);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    -webkit-font-smoothing: antialiased;
+    /* Faint grid, the only texture on the page. */
+    background-image:
+      linear-gradient(to right, rgba(245, 244, 239, 0.028) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(245, 244, 239, 0.028) 1px, transparent 1px);
+    background-size: 72px 72px;
+  }
+
+  ::selection {
+    background: var(--color-ghost);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: var(--rule) solid var(--color-ghost);
+    outline-offset: 3px;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-weight: 700;
+    letter-spacing: -0.02em;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  /* Section rhythm: 128px desktop, 72px mobile. */
+  .section-y {
+    padding-block: 4.5rem;
+  }
+
+  @media (width >= 48rem) {
+    .section-y {
+      padding-block: 8rem;
+    }
+  }
+
+  .shell {
+    width: 100%;
+    max-width: 76rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (width >= 48rem) {
+    .shell {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  /* Wide content (tables, timelines) scrolls inside itself, never the page. */
+  .scroll-x {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+}
+
+/* Reveal animations are opt-in; without JS or with reduced motion the content
+   is simply visible. GSAP adds [data-revealed] once a section enters view. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal]:not([data-revealed]) {
+    opacity: 0;
+    transform: translateY(12px);
+  }
 }
