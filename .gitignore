@@ -40,3 +40,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Sponsor and recap video files — large binaries, kept out of git
+/public/video/*.mp4
