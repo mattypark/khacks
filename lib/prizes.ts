@@ -4,6 +4,8 @@ export type Prize = {
   place: string;
   amount: string;
   detail: string;
+  /** Podium colour — drives the card border, offset shadow, and amount text. */
+  tone: "axiom" | "silver" | "bronze";
   /** Grand prize renders larger. */
   emphasis?: boolean;
 };
@@ -13,17 +15,20 @@ export const prizes: Prize[] = [
     place: "Grand Prize",
     amount: "$5,000",
     detail: "Best project overall, judged across craft, ambition, and demo.",
+    tone: "axiom",
     emphasis: true,
   },
   {
     place: "Runner-up",
     amount: "$2,500",
     detail: "Second overall. Same judging rubric, thinner margin.",
+    tone: "silver",
   },
   {
     place: "Third",
     amount: "$1,000",
     detail: "Third overall.",
+    tone: "bronze",
   },
 ];
 

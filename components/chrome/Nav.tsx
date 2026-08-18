@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { LogoMark } from "./LogoMark";
+import { NavLink } from "./NavLink";
 import { OutlineButton } from "@/components/ui/OutlineButton";
 import { event, nav } from "@/lib/event";
 
@@ -38,13 +38,18 @@ export function Nav() {
 
         <nav aria-label="Primary" className="hidden items-center gap-7 lg:flex">
           {nav.map((item) => (
-            <Link
+            <NavLink
               key={item.href}
               href={item.href}
-              className="text-fine font-bold text-chalk-dim transition-colors duration-150 hover:text-chalk"
+              external={"external" in item && item.external}
+              className={`text-fine font-bold transition-colors duration-150 ${
+                "external" in item && item.external
+                  ? "text-axiom hover:text-chalk"
+                  : "text-chalk-dim hover:text-chalk"
+              }`}
             >
               {item.label}
-            </Link>
+            </NavLink>
           ))}
         </nav>
 

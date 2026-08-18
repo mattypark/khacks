@@ -1,6 +1,13 @@
 import { OutlineBox } from "@/components/ui/OutlineBox";
 import { SectionHead } from "@/components/ui/SectionHead";
-import { prizes, specialPrizes, trackPrizes } from "@/lib/prizes";
+import { prizes, specialPrizes, trackPrizes, type Prize } from "@/lib/prizes";
+
+/** Gold is Axiom green here — the podium reads green, silver, bronze. */
+const AMOUNT: Record<Prize["tone"], string> = {
+  axiom: "text-axiom",
+  silver: "text-silver",
+  bronze: "text-bronze",
+};
 
 export function Prizes() {
   return (
@@ -16,7 +23,7 @@ export function Prizes() {
           <OutlineBox
             key={prize.place}
             as="li"
-            tone={prize.emphasis ? "invader" : "chalk"}
+            tone={prize.tone}
             className={prize.emphasis ? "md:-mt-6" : ""}
             innerClassName={prize.emphasis ? "p-8 md:p-10" : "p-8"}
           >
@@ -24,8 +31,8 @@ export function Prizes() {
               {prize.place}
             </p>
             <p
-              className={`mt-4 font-bold ${
-                prize.emphasis ? "text-hero text-invader" : "text-h1"
+              className={`mt-4 font-bold ${AMOUNT[prize.tone]} ${
+                prize.emphasis ? "text-hero" : "text-h1"
               }`}
             >
               {prize.amount}

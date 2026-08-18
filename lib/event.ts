@@ -57,6 +57,7 @@ export const event = {
   ],
 } as const;
 
+/** `external` links leave the site and open in a new tab. */
 export const nav = [
   { label: "About", href: "/#about" },
   { label: "Tracks", href: "/#tracks" },
@@ -64,4 +65,5 @@ export const nav = [
   { label: "Prizes", href: "/#prizes" },
   { label: "FAQ", href: "/#faq" },
   { label: "Sponsor", href: "/sponsor" },
+  { label: "Axiom", href: "https://www.axiompathways.org/", external: true },
 ] as const;

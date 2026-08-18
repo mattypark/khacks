@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
+import { NavLink } from "./NavLink";
 import { OutlineButton } from "@/components/ui/OutlineButton";
 import { event, nav } from "@/lib/event";
 
@@ -29,14 +29,17 @@ export function MobileSheet({
         >
           <nav aria-label="Primary, mobile" className="shell flex flex-col py-6">
             {nav.map((item) => (
-              <Link
+              <NavLink
                 key={item.href}
                 href={item.href}
+                external={"external" in item && item.external}
                 onClick={onClose}
-                className="border-b-[length:var(--rule)] border-chalk/15 py-4 text-h3 font-bold last:border-b-0"
+                className={`border-b-[length:var(--rule)] border-chalk/15 py-4 text-h3 font-bold last:border-b-0 ${
+                  "external" in item && item.external ? "text-axiom" : ""
+                }`}
               >
                 {item.label}
-              </Link>
+              </NavLink>
             ))}
             <OutlineButton
               href={event.lumaUrl}
