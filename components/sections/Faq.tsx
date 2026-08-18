@@ -14,7 +14,7 @@ export function Faq() {
             Anything missing? Email{" "}
             <a
               href={`mailto:${event.contact.general}`}
-              className="text-chalk underline underline-offset-4 hover:text-ghost"
+              className="text-chalk underline underline-offset-4 hover:text-axiom"
             >
               {event.contact.general}
             </a>{" "}

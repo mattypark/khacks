@@ -1,19 +1,29 @@
 import type { ElementType, ReactNode } from "react";
 
-type Tone = "chalk" | "ghost" | "invader" | "dim";
+type Tone =
+  | "chalk"
+  | "axiom"
+  | "invader"
+  | "dim"
+  | "silver"
+  | "bronze";
 
 const BORDER: Record<Tone, string> = {
   chalk: "border-chalk",
-  ghost: "border-ghost",
+  axiom: "border-axiom",
   invader: "border-invader",
   dim: "border-chalk-dim/50",
+  silver: "border-silver",
+  bronze: "border-bronze",
 };
 
 const SHADOW: Record<Tone, string> = {
   chalk: "bg-chalk",
-  ghost: "bg-ghost",
+  axiom: "bg-axiom",
   invader: "bg-invader",
   dim: "bg-chalk-dim/50",
+  silver: "bg-silver",
+  bronze: "bg-bronze",
 };
 
 type OutlineBoxProps = {

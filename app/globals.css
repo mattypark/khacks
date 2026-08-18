@@ -12,9 +12,19 @@
   --color-ink-deep: #1a1a17;
   --color-chalk: #f5f4ef;
   --color-chalk-dim: #a8a69c;
+  /* Mascot mint. Reserved for the ghost sprite — never a UI state. */
   --color-ghost: #6ab97a;
   --color-invader: #e2542c;
   --color-butter: #f7e9b0;
+
+  /* Axiom Pathways brand green, taken from the Axiom site tokens.
+     -axiom is the on-dark value; -deep matches the logo mark on light. */
+  --color-axiom: #3f8f52;
+  --color-axiom-deep: #2f6b3d;
+
+  /* Podium */
+  --color-silver: #c8c9c7;
+  --color-bronze: #b4783a;
 
   --font-mono: var(--font-jetbrains), ui-monospace, "SF Mono", Menlo, monospace;
   --font-display: var(--font-newsreader), Georgia, serif;
@@ -61,12 +71,12 @@
   }
 
   ::selection {
-    background: var(--color-ghost);
-    color: var(--color-ink);
+    background: var(--color-axiom);
+    color: var(--color-chalk);
   }
 
   :focus-visible {
-    outline: var(--rule) solid var(--color-ghost);
+    outline: var(--rule) solid var(--color-axiom);
     outline-offset: 3px;
   }
 

@@ -29,7 +29,7 @@ export function Footer() {
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className="text-fine hover:text-ghost hover:underline underline-offset-4"
+                  className="text-fine hover:text-axiom hover:underline underline-offset-4"
                 >
                   {item.label}
                 </Link>
@@ -44,7 +44,7 @@ export function Footer() {
             <li>
               <a
                 href={`mailto:${event.contact.general}`}
-                className="text-fine hover:text-ghost hover:underline underline-offset-4"
+                className="text-fine hover:text-axiom hover:underline underline-offset-4"
               >
                 {event.contact.general}
               </a>
@@ -55,7 +55,7 @@ export function Footer() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-fine hover:text-ghost hover:underline underline-offset-4"
+                  className="text-fine hover:text-axiom hover:underline underline-offset-4"
                 >
                   {social.label}
                 </a>

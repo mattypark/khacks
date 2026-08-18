@@ -52,7 +52,7 @@ function OrganizerCard({ person }: { person: Organizer }) {
             href={person.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="block hover:text-ghost"
+            className="block hover:text-axiom"
           >
             {body}
           </a>

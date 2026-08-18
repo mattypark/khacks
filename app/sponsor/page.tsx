@@ -105,7 +105,7 @@ export default function SponsorPage() {
               <ul className="mt-8 flex-1 space-y-3">
                 {tier.perks.map((perk) => (
                   <li key={perk} className="flex gap-3 text-fine">
-                    <span aria-hidden className="text-ghost">
+                    <span aria-hidden className="text-axiom">
                       +
                     </span>
                     <span>{perk}</span>
@@ -146,7 +146,7 @@ export default function SponsorPage() {
               key={step.when}
               className="flex flex-col gap-2 border-b-[length:var(--rule)] border-chalk/20 py-5 sm:flex-row sm:gap-8"
             >
-              <span className="w-40 shrink-0 text-fine font-bold text-ghost">
+              <span className="w-40 shrink-0 text-fine font-bold text-axiom">
                 {step.when}
               </span>
               <span className="text-body">{step.what}</span>

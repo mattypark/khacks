@@ -12,7 +12,7 @@ const VARIANT: Record<Variant, { box: string; shadow: string }> = {
   },
   ghost: {
     box: "border-chalk bg-ink text-chalk hover:bg-chalk hover:text-ink",
-    shadow: "bg-ghost",
+    shadow: "bg-axiom",
   },
   quiet: {
     box: "border-chalk-dim bg-transparent text-chalk-dim hover:border-chalk hover:text-chalk",

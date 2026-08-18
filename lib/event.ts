@@ -7,10 +7,12 @@
  */
 
 export const event = {
-  name: "Khacks",
+  name: "Axiom Khacks",
+  /** Used where the full name would read as repetition (nav, in-body prose). */
+  shortName: "Khacks",
   tagline: "Kentucky's Best Hackathon",
   description:
-    "One day, 8am to 9pm. Free to enter. Build anything with anyone — Khacks is Kentucky's flagship hackathon for high school and college builders.",
+    "One day, 8am to 9pm. Free to enter. Build anything with anyone — Axiom Khacks is Kentucky's flagship hackathon for high school and college builders.",
 
   // TODO(placeholder): swap for the live domain before launch.
   siteUrl: "https://khacks.dev",
@@ -30,7 +32,7 @@ export const event = {
 
   // Bottom notice strip. Set to null to hide it entirely.
   notice: {
-    text: "Applications for Khacks 2026 are open.",
+    text: "Applications for Axiom Khacks 2026 are open.",
     linkLabel: "Grab a spot on Luma",
   } as { text: string; linkLabel: string } | null,
 

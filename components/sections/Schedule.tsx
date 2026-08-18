@@ -26,7 +26,7 @@ export function Schedule() {
                 >
                   <span
                     className={`w-16 shrink-0 text-fine font-bold ${
-                      slot.key ? "text-ghost" : "text-chalk-dim"
+                      slot.key ? "text-axiom" : "text-chalk-dim"
                     }`}
                   >
                     {slot.time}
@@ -36,7 +36,7 @@ export function Schedule() {
                       {slot.key ? (
                         <span
                           aria-hidden
-                          className="mr-2 inline-block size-2 translate-y-[-2px] bg-ghost"
+                          className="mr-2 inline-block size-2 translate-y-[-2px] bg-axiom"
                         />
                       ) : null}
                       {slot.title}
