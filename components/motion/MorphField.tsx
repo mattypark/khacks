@@ -4,30 +4,136 @@ import { useEffect, useRef } from "react";
 import { prefersReducedMotion } from "@/lib/motion";
 
 /**
- * The hero's background: a large wireframe solid that spins continuously and
- * swaps to a different shape every few seconds. Six shapes live in one rotating
- * group; only opacity and scale cross-fade, so the spin never resets and the
- * change reads as the object morphing rather than cutting.
+ * The site backdrop: one wireframe object that spins continuously and morphs
+ * between shapes — the Axiom mark among them.
+ *
+ * Every shape is resampled to the same fixed number of line segments, so the
+ * change is a real vertex interpolation: each line travels to its new position
+ * rather than one shape fading out under another.
  *
  * Three.js is imported lazily on idle and only runs while on screen, so it
  * stays out of the initial route bundle. Under reduce-motion — or without WebGL
- * — nothing mounts and the hero is simply the crate stack on a flat canvas.
+ * — nothing mounts at all.
  */
 
-// Each shape holds for a random spell inside this window, so the changes never
-// land on a countable beat.
-const DWELL_MIN_MS = 1800;
-const DWELL_MAX_MS = 3200;
-const FADE_MS = 800; // cross-fade length
+/** Every shape is rebuilt to exactly this many segments so vertices can pair up. */
+const SEGMENTS = 360;
 
-const nextDwell = () =>
+const DWELL_MIN_MS = 2400;
+const DWELL_MAX_MS = 4200;
+const MORPH_MS = 1400;
+
+const CHALK = 0xf5f4ef;
+const AXIOM = 0x5ec27c;
+const OPACITY = 0.5;
+
+const randomDwell = () =>
   DWELL_MIN_MS + Math.random() * (DWELL_MAX_MS - DWELL_MIN_MS);
 
-/** Smoothstep — eases both ends of the cross-fade so nothing snaps. */
-const ease = (t: number) => t * t * (3 - 2 * t);
-// WebGL ignores line width, so opacity is the only lever for presence at this
-// scale. High enough to read behind the type, low enough not to fight it.
-const PEAK_OPACITY = 0.36;
+/** easeInOutCubic — slow at both ends so the travel reads as deliberate. */
+const ease = (t: number) =>
+  t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
+
+type Segment = [number, number, number, number, number, number];
+
+/**
+ * Stretch or squeeze a segment list to exactly SEGMENTS entries by cutting each
+ * source segment into equal pieces. Coverage stays even, so no part of the
+ * shape is left thin.
+ */
+function resample(segments: Segment[]): Float32Array {
+  const out = new Float32Array(SEGMENTS * 6);
+  const count = segments.length;
+  // Denser shapes are sampled evenly across the whole list — taking the first
+  // SEGMENTS entries would lop the tail off a torus knot.
+  const dense = count >= SEGMENTS;
+  const pieces = dense ? 1 : Math.ceil(SEGMENTS / count);
+
+  for (let i = 0; i < SEGMENTS; i += 1) {
+    const index = dense
+      ? Math.floor((i * count) / SEGMENTS)
+      : i % count;
+    const [ax, ay, az, bx, by, bz] = segments[index];
+    const piece = dense ? 0 : Math.floor(i / count);
+    const t0 = Math.min(piece / pieces, 1);
+    const t1 = Math.min((piece + 1) / pieces, 1);
+    const o = i * 6;
+
+    out[o] = ax + (bx - ax) * t0;
+    out[o + 1] = ay + (by - ay) * t0;
+    out[o + 2] = az + (bz - az) * t0;
+    out[o + 3] = ax + (bx - ax) * t1;
+    out[o + 4] = ay + (by - ay) * t1;
+    out[o + 5] = az + (bz - az) * t1;
+  }
+
+  return out;
+}
+
+/** Turns any geometry's edge list into the segment pairs `resample` wants. */
+function toSegments(position: ArrayLike<number>): Segment[] {
+  const segments: Segment[] = [];
+  for (let i = 0; i < position.length; i += 6) {
+    segments.push([
+      position[i],
+      position[i + 1],
+      position[i + 2],
+      position[i + 3],
+      position[i + 4],
+      position[i + 5],
+    ]);
+  }
+  return segments;
+}
+
+/** Connects a run of points into segments; `close` joins the last back to the first. */
+function polyline(points: [number, number][], close = false): Segment[] {
+  const segments: Segment[] = [];
+  const end = close ? points.length : points.length - 1;
+  for (let i = 0; i < end; i += 1) {
+    const [ax, ay] = points[i];
+    const [bx, by] = points[(i + 1) % points.length];
+    segments.push([ax, ay, 0, bx, by, 0]);
+  }
+  return segments;
+}
+
+/**
+ * The Axiom Pathways mark, drawn flat: the circle, the path cutting through it,
+ * and the four-point sparkle above the shoulder.
+ */
+function axiomMark(): Segment[] {
+  const circle: [number, number][] = [];
+  for (let i = 0; i < 56; i += 1) {
+    const a = (i / 56) * Math.PI * 2;
+    circle.push([-0.55 + Math.cos(a) * 1.5, Math.sin(a) * 1.5]);
+  }
+
+  const path: [number, number][] = [
+    [-2.0, -0.5],
+    [-1.25, 0.42],
+    [-0.72, -0.08],
+    [-0.3, 0.5],
+    [0.28, 1.05],
+  ];
+
+  const sparkle: [number, number][] = [
+    [0.62, 1.02],
+    [0.92, 1.28],
+    [1.02, 1.92],
+    [1.14, 1.3],
+    [1.52, 1.16],
+    [1.06, 1.0],
+    [0.98, 0.52],
+    [0.84, 0.96],
+  ];
+
+  return [
+    ...polyline(circle, true),
+    ...polyline(path),
+    ...polyline(sparkle, true),
+  ];
+}
 
 export function MorphField({ className = "" }: { className?: string }) {
   const hostRef = useRef<HTMLDivElement>(null);
@@ -48,19 +154,19 @@ export function MorphField({ className = "" }: { className?: string }) {
       try {
         renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
       } catch {
-        return; // No WebGL — the crate stack carries the hero alone.
+        return; // No WebGL — the page simply has no backdrop.
       }
 
-      const size = host.clientWidth || 640;
+      const size = host.clientWidth || 520;
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.setSize(size, size);
       host.appendChild(renderer.domElement);
 
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
-      camera.position.set(0, 0, 6);
+      camera.position.set(0, 0, 7.2);
 
-      /** Bulged cylinder — the bourbon barrel the hero started with. */
+      /** Bulged cylinder — a bourbon barrel. */
       const barrel = () => {
         const geo = new THREE.CylinderGeometry(1.3, 1.3, 2.5, 16, 3);
         const pos = geo.attributes.position;
@@ -74,65 +180,59 @@ export function MorphField({ className = "" }: { className?: string }) {
         return geo;
       };
 
-      /** Three nested cubes — the crate stack, abstracted. */
-      const lattice = () => {
-        const merged = new THREE.BufferGeometry();
-        const verts: number[] = [];
-        [2.4, 1.7, 1.0].forEach((s) => {
-          const box = new THREE.BoxGeometry(s, s, s);
-          const edges = new THREE.EdgesGeometry(box);
-          verts.push(...Array.from(edges.attributes.position.array));
-          box.dispose();
-          edges.dispose();
-        });
-        merged.setAttribute(
-          "position",
-          new THREE.Float32BufferAttribute(verts, 3),
+      /** Reads a solid's edges, then throws the temporary geometry away. */
+      const edgesOf = (geo: import("three").BufferGeometry): Segment[] => {
+        const edges = new THREE.EdgesGeometry(geo, 18);
+        const segments = toSegments(
+          edges.attributes.position.array as Float32Array,
         );
-        return merged;
+        edges.dispose();
+        geo.dispose();
+        return segments;
       };
 
-      type Shape = {
-        geo: () => import("three").BufferGeometry;
-        /** Already edge-only — skip the EdgesGeometry pass. */
-        pre?: boolean;
-        /** Draws in Axiom green instead of chalk. */
-        axiom?: boolean;
-      };
+      /** Three nested cubes — the crate stack, abstracted. */
+      const lattice = (): Segment[] =>
+        [2.4, 1.7, 1.0].flatMap((s) => edgesOf(new THREE.BoxGeometry(s, s, s)));
 
-      const SHAPES: Shape[] = [
-        { geo: barrel },
-        { geo: () => new THREE.IcosahedronGeometry(1.75, 1) },
-        { geo: () => new THREE.TorusKnotGeometry(1.15, 0.36, 64, 10), axiom: true },
-        { geo: () => new THREE.OctahedronGeometry(1.95, 0) },
-        { geo: lattice, pre: true },
-        { geo: () => new THREE.DodecahedronGeometry(1.8, 0) },
+      const SHAPES: { segments: Segment[]; axiom?: boolean }[] = [
+        { segments: edgesOf(barrel()) },
+        { segments: edgesOf(new THREE.IcosahedronGeometry(1.7, 1)) },
+        { segments: axiomMark(), axiom: true },
+        { segments: edgesOf(new THREE.TorusKnotGeometry(1.1, 0.34, 48, 8)) },
+        { segments: edgesOf(new THREE.OctahedronGeometry(1.9, 0)) },
+        { segments: lattice() },
+        { segments: edgesOf(new THREE.DodecahedronGeometry(1.75, 0)) },
       ];
 
-      const group = new THREE.Group();
-      scene.add(group);
+      const frames = SHAPES.map((shape) => resample(shape.segments));
 
-      const meshes = SHAPES.map((shape, i) => {
-        const source = shape.geo();
-        const geometry = shape.pre
-          ? source
-          : new THREE.EdgesGeometry(source, 18);
-        const material = new THREE.LineBasicMaterial({
-          color: shape.axiom ? 0x3f8f52 : 0xf5f4ef,
-          transparent: true,
-          opacity: i === 0 ? PEAK_OPACITY : 0,
-        });
-        const mesh = new THREE.LineSegments(geometry, material);
-        mesh.visible = i === 0;
-        mesh.scale.setScalar(i === 0 ? 1 : 0.85);
-        group.add(mesh);
-        // The pre-edged lattice reuses `source` as its geometry; don't double-free.
-        return { mesh, material, geometry, source: shape.pre ? null : source };
+      const geometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(frames[0]);
+      geometry.setAttribute(
+        "position",
+        new THREE.BufferAttribute(positions, 3),
+      );
+
+      const material = new THREE.LineBasicMaterial({
+        color: CHALK,
+        transparent: true,
+        opacity: OPACITY,
       });
 
-      let active = 0;
+      const mesh = new THREE.LineSegments(geometry, material);
+      const group = new THREE.Group();
+      group.add(mesh);
+      scene.add(group);
+
+      const chalkColor = new THREE.Color(CHALK);
+      const axiomColor = new THREE.Color(AXIOM);
+
+      let from = 0;
+      let to = 1;
       let elapsed = 0;
-      let dwell = nextDwell();
+      let dwell = randomDwell();
+      let morphing = false;
       let last = 0;
       let frame = 0;
       let running = false;
@@ -142,30 +242,40 @@ export function MorphField({ className = "" }: { className?: string }) {
         last = now;
         elapsed += dt;
 
-        group.rotation.y += dt * 0.00028;
-        group.rotation.x = Math.sin(now * 0.00007) * 0.28;
+        group.rotation.y += dt * 0.00026;
+        group.rotation.x = Math.sin(now * 0.00006) * 0.26;
 
-        if (elapsed >= dwell + FADE_MS) {
+        if (!morphing && elapsed >= dwell) {
+          morphing = true;
           elapsed = 0;
-          dwell = nextDwell();
-          active = (active + 1) % meshes.length;
-          meshes[active].mesh.visible = true;
         }
 
-        // Everything past the dwell window is cross-fade time.
-        const raw = Math.min(Math.max((elapsed - dwell) / FADE_MS, 0), 1);
-        const fade = ease(raw);
-        const outgoing = (active - 1 + meshes.length) % meshes.length;
+        if (morphing) {
+          const t = Math.min(elapsed / MORPH_MS, 1);
+          const eased = ease(t);
+          const a = frames[from];
+          const b = frames[to];
 
-        meshes.forEach(({ mesh, material }, i) => {
-          let amount = 0;
-          if (i === active) amount = raw === 0 ? 1 : fade;
-          else if (i === outgoing && raw > 0) amount = 1 - fade;
+          for (let i = 0; i < positions.length; i += 1) {
+            positions[i] = a[i] + (b[i] - a[i]) * eased;
+          }
+          geometry.attributes.position.needsUpdate = true;
 
-          material.opacity = amount * PEAK_OPACITY;
-          mesh.scale.setScalar(0.85 + amount * 0.15);
-          mesh.visible = amount > 0.001;
-        });
+          // The mark's green arrives with its shape and leaves with it.
+          const wantsGreen = SHAPES[to].axiom ? eased : 0;
+          const hadGreen = SHAPES[from].axiom ? 1 - eased : 0;
+          material.color
+            .copy(chalkColor)
+            .lerp(axiomColor, Math.max(wantsGreen, hadGreen));
+
+          if (t >= 1) {
+            morphing = false;
+            elapsed = 0;
+            dwell = randomDwell();
+            from = to;
+            to = (to + 1) % frames.length;
+          }
+        }
 
         renderer.render(scene, camera);
         frame = requestAnimationFrame(tick);
@@ -200,15 +310,12 @@ export function MorphField({ className = "" }: { className?: string }) {
         cancelAnimationFrame(frame);
         renderer.domElement.remove();
         renderer.dispose();
-        meshes.forEach(({ material, geometry, source }) => {
-          material.dispose();
-          geometry.dispose();
-          source?.dispose();
-        });
+        geometry.dispose();
+        material.dispose();
       };
     };
 
-    // Wait for idle so the hero paints before WebGL work begins.
+    // Wait for idle so the page paints before WebGL work begins.
     const idleOn = typeof window.requestIdleCallback === "function";
     const idle = idleOn
       ? window.requestIdleCallback(() => void start())

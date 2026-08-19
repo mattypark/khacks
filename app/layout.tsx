@@ -58,7 +58,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           aria-hidden
           className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
         >
-          <MorphField className="absolute left-1/2 top-1/2 aspect-square w-[min(68vh,86vw,780px)] -translate-x-1/2 -translate-y-1/2 [mask-image:radial-gradient(circle,#000_52%,transparent_82%)]" />
+          {/* Fades late (72%) so the shape is never clipped mid-line. */}
+          <MorphField className="absolute left-1/2 top-1/2 aspect-square w-[min(52vh,74vw,540px)] -translate-x-1/2 -translate-y-1/2 [mask-image:radial-gradient(circle,#000_72%,transparent_96%)]" />
         </div>
 
         <a

@@ -15,9 +15,9 @@
   --color-invader: #e2542c;
   --color-butter: #f7e9b0;
 
-  /* Axiom Pathways brand green, taken from the Axiom site tokens.
-     -axiom is the on-dark value; -deep matches the logo mark on light. */
-  --color-axiom: #3f8f52;
+  /* Axiom Pathways brand green. -axiom is a lightened on-dark value so it holds
+     up against the ink canvas; -deep is the logo mark's own green. */
+  --color-axiom: #5ec27c;
   --color-axiom-deep: #2f6b3d;
 
   /* Podium */
