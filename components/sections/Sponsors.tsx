@@ -44,7 +44,7 @@ export function Sponsors() {
         ))}
       </div>
 
-      <OutlineButton href="/sponsor" variant="ghost" size="lg" className="mt-16">
+      <OutlineButton href="/sponsor" variant="outline" size="lg" className="mt-16">
         Sponsor Khacks →
       </OutlineButton>
     </section>

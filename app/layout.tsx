@@ -4,6 +4,7 @@ import { Nav } from "@/components/chrome/Nav";
 import { Footer } from "@/components/chrome/Footer";
 import { NoticeBanner } from "@/components/chrome/NoticeBanner";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
+import { MorphField } from "@/components/motion/MorphField";
 import { event } from "@/lib/event";
 import "./globals.css";
 
@@ -50,6 +51,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-full flex-col">
         <SmoothScroll />
+
+        {/* Site-wide backdrop: the wireframe sits behind every page, fixed to
+            the viewport so it stays centred no matter how far you scroll. */}
+        <div
+          aria-hidden
+          className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
+        >
+          <MorphField className="absolute left-1/2 top-1/2 aspect-square w-[min(68vh,86vw,780px)] -translate-x-1/2 -translate-y-1/2 [mask-image:radial-gradient(circle,#000_52%,transparent_82%)]" />
+        </div>
+
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:border-[length:var(--rule)] focus:border-chalk focus:bg-ink focus:px-4 focus:py-2"
@@ -57,10 +68,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           Skip to content
         </a>
         <Nav />
-        <main id="main" className="flex-1">
+        <main id="main" className="relative z-10 flex-1">
           {children}
         </main>
-        <Footer />
+        <div className="relative z-10">
+          <Footer />
+        </div>
         <NoticeBanner />
       </body>
     </html>

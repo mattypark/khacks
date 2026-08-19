@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-type Variant = "primary" | "ghost" | "quiet";
+type Variant = "primary" | "outline" | "quiet";
 type Size = "md" | "lg";
 
 const VARIANT: Record<Variant, { box: string; shadow: string }> = {
@@ -10,7 +10,7 @@ const VARIANT: Record<Variant, { box: string; shadow: string }> = {
     box: "border-invader bg-invader text-ink hover:bg-ink hover:text-invader",
     shadow: "bg-chalk",
   },
-  ghost: {
+  outline: {
     box: "border-chalk bg-ink text-chalk hover:bg-chalk hover:text-ink",
     shadow: "bg-axiom",
   },

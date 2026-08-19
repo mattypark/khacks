@@ -201,7 +201,7 @@ export default function SponsorPage() {
               <OutlineButton
                 href={MAILTO(`${event.name} — ${tier.name} tier`)}
                 external
-                variant={tier.emphasis ? "primary" : "ghost"}
+                variant={tier.emphasis ? "primary" : "outline"}
                 className="mt-10 self-start"
               >
                 Claim {tier.name}

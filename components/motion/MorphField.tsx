@@ -14,9 +14,20 @@ import { prefersReducedMotion } from "@/lib/motion";
  * — nothing mounts and the hero is simply the crate stack on a flat canvas.
  */
 
-const DWELL_MS = 4000; // time each shape holds
-const FADE_MS = 900; // cross-fade length
-const PEAK_OPACITY = 0.26;
+// Each shape holds for a random spell inside this window, so the changes never
+// land on a countable beat.
+const DWELL_MIN_MS = 1800;
+const DWELL_MAX_MS = 3200;
+const FADE_MS = 800; // cross-fade length
+
+const nextDwell = () =>
+  DWELL_MIN_MS + Math.random() * (DWELL_MAX_MS - DWELL_MIN_MS);
+
+/** Smoothstep — eases both ends of the cross-fade so nothing snaps. */
+const ease = (t: number) => t * t * (3 - 2 * t);
+// WebGL ignores line width, so opacity is the only lever for presence at this
+// scale. High enough to read behind the type, low enough not to fight it.
+const PEAK_OPACITY = 0.36;
 
 export function MorphField({ className = "" }: { className?: string }) {
   const hostRef = useRef<HTMLDivElement>(null);
@@ -121,6 +132,7 @@ export function MorphField({ className = "" }: { className?: string }) {
 
       let active = 0;
       let elapsed = 0;
+      let dwell = nextDwell();
       let last = 0;
       let frame = 0;
       let running = false;
@@ -133,20 +145,22 @@ export function MorphField({ className = "" }: { className?: string }) {
         group.rotation.y += dt * 0.00028;
         group.rotation.x = Math.sin(now * 0.00007) * 0.28;
 
-        if (elapsed >= DWELL_MS + FADE_MS) {
+        if (elapsed >= dwell + FADE_MS) {
           elapsed = 0;
+          dwell = nextDwell();
           active = (active + 1) % meshes.length;
           meshes[active].mesh.visible = true;
         }
 
         // Everything past the dwell window is cross-fade time.
-        const fade = Math.min(Math.max((elapsed - DWELL_MS) / FADE_MS, 0), 1);
+        const raw = Math.min(Math.max((elapsed - dwell) / FADE_MS, 0), 1);
+        const fade = ease(raw);
         const outgoing = (active - 1 + meshes.length) % meshes.length;
 
         meshes.forEach(({ mesh, material }, i) => {
           let amount = 0;
-          if (i === active) amount = fade === 0 ? 1 : fade;
-          else if (i === outgoing && fade > 0) amount = 1 - fade;
+          if (i === active) amount = raw === 0 ? 1 : fade;
+          else if (i === outgoing && raw > 0) amount = 1 - fade;
 
           material.opacity = amount * PEAK_OPACITY;
           mesh.scale.setScalar(0.85 + amount * 0.15);

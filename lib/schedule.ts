@@ -4,7 +4,7 @@ export type Slot = {
   time: string;
   title: string;
   detail?: string;
-  /** Anchor moments get the ghost-green marker. */
+  /** Anchor moments get the Axiom-green marker. */
   key?: boolean;
 };
 

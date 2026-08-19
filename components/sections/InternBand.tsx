@@ -45,7 +45,7 @@ export function InternBand() {
         <OutlineButton
           href={axiom.apply}
           external
-          variant="ghost"
+          variant="outline"
           size="lg"
           className="self-start md:self-auto"
         >
